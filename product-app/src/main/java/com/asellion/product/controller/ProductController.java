@@ -5,6 +5,7 @@ import com.asellion.product.mapper.ProductDataMapper;
 import com.asellion.product.model.dto.ProductDto;
 import com.asellion.product.model.dto.ProductRequest;
 import com.asellion.product.model.dto.ProductResponse;
+import com.asellion.product.model.entity.Product;
 import com.asellion.product.service.ProductService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,6 +64,14 @@ public class ProductController {
 		return ResponseEntity.ok(productResponse);
 	}
 
+	/**
+	 * Updates {@link com.asellion.product.model.entity.Product} by given id.
+	 *
+	 * @param id
+	 * @param request
+	 * @return ProductResponse
+	 * @throws ProductNotFoundException
+	 */
 	@PutMapping("/{id}")
 	public ResponseEntity<ProductResponse> updateProduct(@PathVariable("id") Long id, @RequestBody
 			ProductRequest request) throws ProductNotFoundException {
@@ -71,6 +80,22 @@ public class ProductController {
 		ProductResponse productResponse = new ProductResponse();
 		productResponse.setProducts(Collections.singletonList(productDto));
 		log.info("Updated product: {}", productDto);
+		return ResponseEntity.ok(productResponse);
+	}
+
+	/**
+	 * Creates product
+	 *
+	 * @param request
+	 * @return ProductResponse
+	 * @throws ProductNotFoundException
+	 */
+	@PostMapping
+	public ResponseEntity<ProductResponse> createProduct(@RequestBody ProductRequest request) {
+		Product product = productService.createProduct(mapper.toProduct(request.getProduct()));
+		ProductResponse productResponse = new ProductResponse();
+		productResponse.setProducts(Collections.singletonList(mapper.toProductDto(product)));
+		log.info("create product: {}", productResponse.getProducts());
 		return ResponseEntity.ok(productResponse);
 	}
 

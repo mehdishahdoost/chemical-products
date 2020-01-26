@@ -27,6 +27,7 @@ public class ProductServiceImpl implements ProductService {
 
 	/**
 	 * Returns list of {@link Product}
+	 *
 	 * @return array of Product
 	 */
 	@Override
@@ -36,6 +37,7 @@ public class ProductServiceImpl implements ProductService {
 
 	/**
 	 * Return {@link Product} by given product's id
+	 *
 	 * @param id
 	 * @return
 	 * @throws ProductNotFoundException
@@ -52,6 +54,7 @@ public class ProductServiceImpl implements ProductService {
 
 	/**
 	 * Update name and currentPrice of {@link Product}
+	 *
 	 * @param product
 	 * @return Product
 	 * @throws ProductNotFoundException
@@ -70,5 +73,18 @@ public class ProductServiceImpl implements ProductService {
 		} else {
 			throw new ProductNotFoundException("Product not found!");
 		}
+	}
+
+	/**
+	 * Creates {@link Product}
+	 * @param product
+	 * @return Product
+	 */
+	@Override
+	@Transactional
+	public Product createProduct(Product product) {
+		product.setId(null);
+		product.setCreated(new Timestamp(System.currentTimeMillis()));
+		return repository.save(product);
 	}
 }

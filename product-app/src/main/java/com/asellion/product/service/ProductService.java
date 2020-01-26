@@ -29,4 +29,9 @@ public interface ProductService {
 	 */
 	Product updateProduct(Product product) throws  ProductNotFoundException;
 
+	/**
+	 * Creates product
+	 */
+	Product createProduct(Product product);
+
 }

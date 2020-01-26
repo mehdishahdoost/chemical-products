@@ -68,4 +68,15 @@ public class ProductControllerIT {
 		Assertions.assertEquals(response.getBody().getProducts().get(0).getName(), "update");
 	}
 
+	@Test
+	public void createProduct() {
+		ProductDto productDto = new ProductDto(2L, "update", "20", new Date());
+		ProductRequest productRequest = new ProductRequest(productDto);
+		ResponseEntity<ProductResponse> response = restTemplate.postForEntity("http://localhost:" + port + "/api" +
+				"/products", productRequest, ProductResponse.class);
+		Assertions.assertEquals(response.getStatusCode(), HttpStatus.OK);
+		Assertions.assertEquals(response.getBody().getProducts().size(), 1);
+		Assertions.assertEquals(response.getBody().getProducts().get(0).getId(), 7L);
+	}
+
 }
