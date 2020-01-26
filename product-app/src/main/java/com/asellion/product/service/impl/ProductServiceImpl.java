@@ -7,6 +7,8 @@ import com.asellion.product.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,17 +25,49 @@ public class ProductServiceImpl implements ProductService {
 	@Autowired
 	private ProductRepository repository;
 
+	/**
+	 * Returns list of {@link Product}
+	 * @return array of Product
+	 */
 	@Override
 	public List<Product> getProducts() {
 		return repository.findAll();
 	}
 
+	/**
+	 * Return {@link Product} by given product's id
+	 * @param id
+	 * @return
+	 * @throws ProductNotFoundException
+	 */
 	@Override
 	public Product getProduct(Long id) throws ProductNotFoundException {
 		Optional<Product> product = repository.findById(id);
-		if(product.isPresent()) {
+		if (product.isPresent()) {
 			return product.get();
-		}else {
+		} else {
+			throw new ProductNotFoundException("Product not found!");
+		}
+	}
+
+	/**
+	 * Update name and currentPrice of {@link Product}
+	 * @param product
+	 * @return Product
+	 * @throws ProductNotFoundException
+	 */
+	@Override
+	@Transactional
+	public Product updateProduct(Product product) throws ProductNotFoundException {
+		Optional<Product> currentProduct = repository.findById(product.getId());
+		if (currentProduct.isPresent()) {
+			Product curProduct = currentProduct.get();
+			curProduct.setName(product.getName());
+			curProduct.setCurrentPrice(product.getCurrentPrice());
+			curProduct.setLastUpdated(new Timestamp(System.currentTimeMillis()));
+			repository.save(curProduct);
+			return curProduct;
+		} else {
 			throw new ProductNotFoundException("Product not found!");
 		}
 	}

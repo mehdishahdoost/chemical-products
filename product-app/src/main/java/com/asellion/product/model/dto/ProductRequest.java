@@ -4,22 +4,17 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Date;
-
 /**
- * ProductDto -
+ * ProductRequest -
  *
  * @author Mehdi Shahdoost
- * @version 2020/1/26
+ * @version 2020/1/27
  * @since 1.0.0
  */
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
-public class ProductDto {
+@AllArgsConstructor
+public class ProductRequest {
 
-	private Long id;
-	private String name;
-	private String currentPrice;
-	private Date lastUpdated;
+	private ProductDto product;
 }

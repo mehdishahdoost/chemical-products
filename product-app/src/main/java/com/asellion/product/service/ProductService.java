@@ -24,4 +24,9 @@ public interface ProductService {
 	 */
 	Product getProduct(Long id) throws ProductNotFoundException;
 
+	/**
+	 * Update product by given id
+	 */
+	Product updateProduct(Product product) throws  ProductNotFoundException;
+
 }

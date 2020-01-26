@@ -31,4 +31,6 @@ public interface ProductDataMapper {
 
 	@IterableMapping(qualifiedBy = ProductMap.class)
 	List<ProductDto> toProductDtoList(List<Product> products);
+
+	Product toProduct(ProductDto productDto);
 }

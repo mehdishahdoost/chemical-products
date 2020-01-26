@@ -1,5 +1,7 @@
 package com.asellion.product;
 
+import com.asellion.product.model.dto.ProductDto;
+import com.asellion.product.model.dto.ProductRequest;
 import com.asellion.product.model.dto.ProductResponse;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -9,6 +11,8 @@ import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+
+import java.util.Date;
 
 /**
  * ProductControllerIT -
@@ -43,5 +47,25 @@ public class ProductControllerIT {
 		Assertions.assertEquals(response.getBody().getProducts().get(0).getName(), "2-Aminoindan");
 	}
 
+	@Test
+	public void getProduct_exception() {
+		ResponseEntity<ProductResponse> response = this.restTemplate.getForEntity("http://localhost:" + port +
+				"/api/products/10", ProductResponse.class);
+		Assertions.assertEquals(response.getStatusCode(), HttpStatus.OK);
+		Assertions.assertEquals(response.getBody().getProducts(), null);
+		Assertions.assertEquals(response.getBody().getMessage(), "Product not found!");
+	}
+
+	@Test
+	public void updateProduct() {
+		ProductDto productDto = new ProductDto(2L, "update", "20", new Date());
+		ProductRequest productRequest = new ProductRequest(productDto);
+		restTemplate.put("http://localhost:" + port + "/api/products/2", productRequest);
+		ResponseEntity<ProductResponse> response = restTemplate.getForEntity("http://localhost:" +
+				port + "/api/products/2", ProductResponse.class);
+		Assertions.assertEquals(response.getStatusCode(), HttpStatus.OK);
+		Assertions.assertEquals(response.getBody().getProducts().size(), 1);
+		Assertions.assertEquals(response.getBody().getProducts().get(0).getName(), "update");
+	}
 
 }
