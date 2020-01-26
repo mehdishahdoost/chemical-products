@@ -1,5 +1,6 @@
 package com.asellion.product.service.impl;
 
+import com.asellion.product.exception.ProductNotFoundException;
 import com.asellion.product.model.entity.Product;
 import com.asellion.product.repository.ProductRepository;
 import com.asellion.product.service.ProductService;
@@ -7,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * ProductServiceImpl -
@@ -24,5 +26,15 @@ public class ProductServiceImpl implements ProductService {
 	@Override
 	public List<Product> getProducts() {
 		return repository.findAll();
+	}
+
+	@Override
+	public Product getProduct(Long id) throws ProductNotFoundException {
+		Optional<Product> product = repository.findById(id);
+		if(product.isPresent()) {
+			return product.get();
+		}else {
+			throw new ProductNotFoundException("Product not found!");
+		}
 	}
 }

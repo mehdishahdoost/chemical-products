@@ -34,4 +34,14 @@ public class ProductControllerIT {
 	}
 
 
+	@Test
+	public void getProduct_successful() {
+		ResponseEntity<ProductResponse> response = this.restTemplate.getForEntity("http://localhost:" + port +
+				"/api/products/1", ProductResponse.class);
+		Assertions.assertEquals(response.getStatusCode(), HttpStatus.OK);
+		Assertions.assertEquals(response.getBody().getProducts().size(), 1);
+		Assertions.assertEquals(response.getBody().getProducts().get(0).getName(), "2-Aminoindan");
+	}
+
+
 }
