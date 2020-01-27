@@ -1,16 +1,13 @@
 package com.asellion.product;
 
-import com.asellion.product.model.dto.ProductDto;
-import com.asellion.product.model.dto.ProductRequest;
-import com.asellion.product.model.dto.ProductResponse;
+import com.asellion.product.model.dto.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.web.server.LocalServerPort;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 
 import java.util.Date;
 
@@ -31,8 +28,17 @@ public class ProductControllerIT {
 
 	@Test
 	public void getProducts_successful() {
-		ResponseEntity<ProductResponse> response = this.restTemplate.getForEntity("http://localhost:" + port +
-				"/api/products", ProductResponse.class);
+		// Creates JWT token with calling authenticate
+		AuthRequest authRequest = new AuthRequest();
+		authRequest.setUsername("asellion");
+		authRequest.setPassword("123456");
+		ResponseEntity<AuthResponse> tokenResponse = this.restTemplate.postForEntity(
+				"http://localhost:" + port + "/api/authenticate", authRequest, AuthResponse.class);
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_JSON);
+		headers.set("Authorization", "Bearer " + tokenResponse.getBody().getToken());
+		ResponseEntity<ProductResponse> response = this.restTemplate.exchange("http://localhost:" + port +
+				"/api/products",HttpMethod.GET, new HttpEntity<Object>(headers), ProductResponse.class);
 		Assertions.assertEquals(response.getStatusCode(), HttpStatus.OK);
 		Assertions.assertEquals(response.getBody().getProducts().size(), 6);
 	}
@@ -40,8 +46,17 @@ public class ProductControllerIT {
 
 	@Test
 	public void getProduct_successful() {
-		ResponseEntity<ProductResponse> response = this.restTemplate.getForEntity("http://localhost:" + port +
-				"/api/products/1", ProductResponse.class);
+		// Creates JWT token with calling authenticate
+		AuthRequest authRequest = new AuthRequest();
+		authRequest.setUsername("asellion");
+		authRequest.setPassword("123456");
+		ResponseEntity<AuthResponse> tokenResponse = this.restTemplate.postForEntity(
+				"http://localhost:" + port + "/api/authenticate", authRequest, AuthResponse.class);
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_JSON);
+		headers.set("Authorization", "Bearer " + tokenResponse.getBody().getToken());
+		ResponseEntity<ProductResponse> response = this.restTemplate.exchange("http://localhost:" + port +
+				"/api/products/1",HttpMethod.GET, new HttpEntity<Object>(headers), ProductResponse.class);
 		Assertions.assertEquals(response.getStatusCode(), HttpStatus.OK);
 		Assertions.assertEquals(response.getBody().getProducts().size(), 1);
 		Assertions.assertEquals(response.getBody().getProducts().get(0).getName(), "2-Aminoindan");
@@ -49,8 +64,17 @@ public class ProductControllerIT {
 
 	@Test
 	public void getProduct_exception() {
-		ResponseEntity<ProductResponse> response = this.restTemplate.getForEntity("http://localhost:" + port +
-				"/api/products/10", ProductResponse.class);
+		// Creates JWT token with calling authenticate
+		AuthRequest authRequest = new AuthRequest();
+		authRequest.setUsername("asellion");
+		authRequest.setPassword("123456");
+		ResponseEntity<AuthResponse> tokenResponse = this.restTemplate.postForEntity(
+				"http://localhost:" + port + "/api/authenticate", authRequest, AuthResponse.class);
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_JSON);
+		headers.set("Authorization", "Bearer " + tokenResponse.getBody().getToken());
+		ResponseEntity<ProductResponse> response = this.restTemplate.exchange("http://localhost:" + port +
+				"/api/products/10",HttpMethod.GET, new HttpEntity<Object>(headers), ProductResponse.class);
 		Assertions.assertEquals(response.getStatusCode(), HttpStatus.OK);
 		Assertions.assertEquals(response.getBody().getProducts(), null);
 		Assertions.assertEquals(response.getBody().getMessage(), "Product not found!");
@@ -58,11 +82,23 @@ public class ProductControllerIT {
 
 	@Test
 	public void updateProduct() {
+		// Creates JWT token with calling authenticate
+		AuthRequest authRequest = new AuthRequest();
+		authRequest.setUsername("asellion");
+		authRequest.setPassword("123456");
+		ResponseEntity<AuthResponse> tokenResponse = this.restTemplate.postForEntity(
+				"http://localhost:" + port + "/api/authenticate", authRequest, AuthResponse.class);
+
 		ProductDto productDto = new ProductDto(2L, "update", "20", new Date());
 		ProductRequest productRequest = new ProductRequest(productDto);
-		restTemplate.put("http://localhost:" + port + "/api/products/2", productRequest);
-		ResponseEntity<ProductResponse> response = restTemplate.getForEntity("http://localhost:" +
-				port + "/api/products/2", ProductResponse.class);
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_JSON);
+		headers.set("Authorization", "Bearer " + tokenResponse.getBody().getToken());
+		HttpEntity<ProductRequest> entity = new HttpEntity<ProductRequest>(productRequest, headers);
+		restTemplate.put("http://localhost:" + port + "/api/products/2", entity);
+		ResponseEntity<ProductResponse> response = restTemplate.exchange("http://localhost:" +
+				port + "/api/products/2",HttpMethod.GET,new HttpEntity<Object>(headers), ProductResponse.class,
+				headers);
 		Assertions.assertEquals(response.getStatusCode(), HttpStatus.OK);
 		Assertions.assertEquals(response.getBody().getProducts().size(), 1);
 		Assertions.assertEquals(response.getBody().getProducts().get(0).getName(), "update");
@@ -70,10 +106,21 @@ public class ProductControllerIT {
 
 	@Test
 	public void createProduct() {
+		// Creates JWT token with calling authenticate
+		AuthRequest authRequest = new AuthRequest();
+		authRequest.setUsername("asellion");
+		authRequest.setPassword("123456");
+		ResponseEntity<AuthResponse> tokenResponse = this.restTemplate.postForEntity(
+				"http://localhost:" + port + "/api/authenticate", authRequest, AuthResponse.class);
+
 		ProductDto productDto = new ProductDto(2L, "update", "20", new Date());
 		ProductRequest productRequest = new ProductRequest(productDto);
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_JSON);
+		headers.set("Authorization", "Bearer " + tokenResponse.getBody().getToken());
+		HttpEntity<ProductRequest> entity = new HttpEntity<ProductRequest>(productRequest, headers);
 		ResponseEntity<ProductResponse> response = restTemplate.postForEntity("http://localhost:" + port + "/api" +
-				"/products", productRequest, ProductResponse.class);
+				"/products", entity, ProductResponse.class);
 		Assertions.assertEquals(response.getStatusCode(), HttpStatus.OK);
 		Assertions.assertEquals(response.getBody().getProducts().size(), 1);
 		Assertions.assertEquals(response.getBody().getProducts().get(0).getId(), 7L);
