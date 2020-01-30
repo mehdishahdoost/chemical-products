@@ -1,10 +1,11 @@
 package com.asellion.product;
 
-import com.asellion.product.model.dto.AuthRequest;
-import com.asellion.product.model.dto.AuthResponse;
-import com.asellion.product.model.dto.UserRequest;
-import com.asellion.product.model.dto.UserResponse;
-import com.asellion.product.repository.UserRepository;
+import ir.beesmart.product.ProductAppApplication;
+import ir.beesmart.product.model.dto.AuthRequest;
+import ir.beesmart.product.model.dto.AuthResponse;
+import ir.beesmart.product.model.dto.UserRequest;
+import ir.beesmart.product.model.dto.UserResponse;
+import ir.beesmart.product.repository.UserRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
